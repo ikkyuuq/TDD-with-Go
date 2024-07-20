@@ -34,13 +34,25 @@ func TestPerimeter(t *testing.T) {
 // that can be tested in the same manner.
 func TestArea(t *testing.T) {
 	areaTests := []struct {
-		name     string
 		shape    Shape
+		name     string
 		expected float64
 	}{
-		{name: "Rectangle", shape: Rectangle{10.0, 10.0}, expected: 100.0},
-		{name: "Circle", shape: Circle{10}, expected: 314.1592653589793},
-		{name: "Triangle", shape: Triangle{12, 6}, expected: 36.0},
+		{
+			name:     "Rectangle",
+			shape:    Rectangle{10.0, 10.0},
+			expected: 100.0,
+		},
+		{
+			name:     "Circle",
+			shape:    Circle{10},
+			expected: 314.1592653589793,
+		},
+		{
+			name:     "Triangle",
+			shape:    Triangle{12, 6},
+			expected: 36.0,
+		},
 	}
 
 	for _, tt := range areaTests {
