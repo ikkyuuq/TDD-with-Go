@@ -66,3 +66,14 @@ func assertError(t testing.TB, err error) {
 		t.Fatal("expected to get an error")
 	}
 }
+
+func TestUpdate(t *testing.T) {
+	key := "test"
+	definition := "this is just a test"
+	dictionary := Dictionary{key: definition}
+	newDefinition := "new definition"
+
+	dictionary.Update(key, newDefinition)
+
+	assertDefinition(t, dictionary, key, newDefinition)
+}
