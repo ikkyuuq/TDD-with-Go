@@ -22,7 +22,7 @@ func TestSearch(t *testing.T) {
 		want := ErrNotFound
 
 		// Expected error
-		assertError(t, err)
+		assertError(t, err, ErrNotFound)
 
 		assertStrings(t, err.Error(), want.Error())
 	})
@@ -44,7 +44,7 @@ func TestAdd(t *testing.T) {
 		err := dictionary.Add(key, "new test")
 
 		// Expected error
-		assertError(t, err)
+		assertError(t, err, ErrWordExists)
 
 		assertDefinition(t, dictionary, key, definition)
 	})
@@ -60,9 +60,9 @@ func assertDefinition(t testing.TB, dictionary Dictionary, key, definition strin
 	assertStrings(t, got, definition)
 }
 
-func assertError(t testing.TB, err error) {
+func assertError(t testing.TB, err error, expected DictionaryErr) {
 	t.Helper()
-	if err == nil {
+	if err.Error() != expected.Error() {
 		t.Fatal("expected to get an error")
 	}
 }
@@ -76,4 +76,14 @@ func TestUpdate(t *testing.T) {
 	dictionary.Update(key, newDefinition)
 
 	assertDefinition(t, dictionary, key, newDefinition)
+}
+
+func TestDelete(t *testing.T) {
+	key := "test"
+	dictionary := Dictionary{key: "test definition"}
+
+	dictionary.Delete(key)
+
+	_, err := dictionary.Search(key)
+	assertError(t, err, ErrNotFound)
 }
