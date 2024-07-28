@@ -10,6 +10,27 @@ import (
 	"testing"
 )
 
+func assertString(t testing.TB, got, want string) {
+	t.Helper()
+	if got != want {
+		t.Errorf("got %q want %q", got, want)
+	}
+}
+
+func assertRequest(t testing.TB, err error) {
+	t.Helper()
+	if err != nil {
+		t.Fatalf("Failed to make a request: %v", err)
+	}
+}
+
+func assertResponse(t testing.TB, got, expected int) {
+	t.Helper()
+	if got != expected {
+		t.Errorf("Expected %v, got %v", expected, got)
+	}
+}
+
 func TestLogMessage(t *testing.T) {
 	t.Run("capture the output with bytes.Buffer", func(t *testing.T) {
 		// bytes.Buffer which implements the io.Writer interface to capture the output.
@@ -19,9 +40,7 @@ func TestLogMessage(t *testing.T) {
 		got := buffer.String()
 		want := "[DEBUG] This is a debug message"
 
-		if got != want {
-			t.Errorf("got %q want %q", got, want)
-		}
+		assertString(t, got, want)
 	})
 	t.Run("the internet", func(t *testing.T) {
 		// Create new http server with httptest that take hanlderfunc with LogMessageHandler
@@ -33,31 +52,24 @@ func TestLogMessage(t *testing.T) {
 
 		// GET on specific URL
 		resp, err := http.Get(url)
-		if err != nil {
-			t.Fatalf("Failed to make a request: %v", err)
-		}
+		assertRequest(t, err)
+
 		// Close resp after reading from it
 		defer resp.Body.Close()
 
-		if resp.StatusCode != http.StatusOK {
-			t.Errorf("Expected status OK, got %v", resp.StatusCode)
-		}
+		assertResponse(t, resp.StatusCode, http.StatusOK)
 
 		// Create a recorder that take body field
 		body := httptest.NewRecorder().Body
 		// Read the response body
 		body.ReadFrom(resp.Body)
-		if err != nil {
-			t.Fatalf("Failed to read response body: %v", err)
-		}
+		assertRequest(t, err)
 
 		// Get a string from *bytes.Buffer (body) that read body of resp
 		got := body.String()
 		want := "[INFO] This a INFO message from internet"
 
-		if got != want {
-			t.Errorf("got %q want %q", server.URL, want)
-		}
+		assertString(t, got, want)
 	})
 }
 
